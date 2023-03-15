@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <div class="main-container">
+    <div class="container">
+      <textarea class="ta" oninput="changeKey(event);"></textarea>
+
+      <div class="utils">
+        <i class="fa fa-refresh tooltip" onclick="reset();">
+          <span class="tooltiptext">Reset</span>
+        </i>
+        <i class="fa fa-copy tooltip" onclick="copy();">
+          <span class="tooltiptext">Copy to Clipboard</span>
+        </i>
+      </div>
+    </div>
+    <button class="btn" id="convert" onclick="convert();">Decrypt</button>
+  </div>
+</body>
+
+<script>
+
+  let changeFlag = true;
+
+  window.onload = () => {
+    document.querySelector('.ta').focus();
+  }
+
+  function changeKey(e) {
+    if(e.data){
+      changeFlag = true;
+      let ascii = e.data.charCodeAt(0);
+      if((ascii >= 65 && ascii <= 90) || (ascii >= 97 && ascii <= 122)) {
+        let ta = document.querySelector('.ta');
+        let text = ta.value.slice(0, -1);
+        ta.value = text + String.fromCharCode(ascii+1);
+      }
+    }
+  }
+
+  function convert() {
+    
+    let text = document.querySelector('.ta').value;
+    let str = '';
+    if(changeFlag) {
+      for(let i=0; i < text.length; i++) {
+        let ascii = text[i].charCodeAt(0);
+        if((ascii >= 65 && ascii <= 90) || (ascii >= 97 && ascii <= 122)) {
+          str += String.fromCharCode(ascii-1);
+        }else{
+          str += text[i];
+        }
+      }
+      changeFlag = false;
+      document.getElementById('convert').innerText = "Encrypt";
+    } else {
+      for(let i=0; i < text.length; i++) {
+        let ascii = text[i].charCodeAt(0);
+        if((ascii >= 65 && ascii <= 90) || (ascii >= 97 && ascii <= 122)) {
+          str += String.fromCharCode(ascii+1);
+        }else{
+          str += text[i];
+        }
+      }
+      changeFlag = true; 
+      document.getElementById('convert').innerText = "Decrypt";
+    }
+    document.querySelector('.ta').value = str;
+  }
+
+  function reset() {
+    document.querySelector('.ta').value = '';
+    changeFlag = true;
+    document.querySelector('.ta').focus();
+  }
+
+  function copy() {
+    // Get the text field
+    let copyText = document.querySelector(".ta");
+
+    // Select the text field
+    copyText.select();
+    copyText.setSelectionRange(0, 99999); // For mobile devices
+
+    // Copy the text inside the text field
+    navigator.clipboard.writeText(copyText.value);
+    document.querySelectorAll('.tooltiptext')[1].innerText = 'Copied';
+    setTimeout(() => {
+      document.querySelectorAll('.tooltiptext')[1].innerText = 'Copy to Clipboard';
+    }, 500);
+  }
+
+</script>
+
+</html>
